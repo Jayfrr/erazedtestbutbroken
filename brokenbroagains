@@ -1,0 +1,455 @@
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/WetCheezit/Bracket-V2/main/src.lua"))()
+
+-- Window
+local Window, MainGUI = Library:CreateWindow("ERAZED PREMIUM")
+
+-- Tabs
+local Tab1 = Window:CreateTab("Legit")
+
+local Tab2 = Window:CreateTab("Rage")
+
+
+local Tab3 = Window:CreateTab("Info")
+
+
+
+
+
+
+local Groupbox1 = Tab1:CreateGroupbox("Aim", "Left")
+local Groupbox2 = Tab1:CreateGroupbox("Anti Lock", "Right")
+
+local Groupbox3 = Tab1:CreateGroupbox("Player", "Left")
+local Groupbox4 = Tab1:CreateGroupbox("Visual", "Right")
+
+-- Groupbox 1
+
+
+
+
+local ExampleButton = Groupbox1:CreateButton("Aim Bot", function()
+    getgenv().Aimbot = {
+        Status = true,
+        Keybind  = 'C',
+        Hitpart = 'HumanoidRootPart',
+        ['Prediction'] = {
+            X = 0.161,
+            Y = 0.1,
+        },
+    }
+     
+    if getgenv().AimbotRan then
+        return
+    else
+        getgenv().AimbotRan = true
+    end
+    -- make it reexecutable to update settings
+     
+     
+    local RunService = game:GetService('RunService')
+    local Workspace = game:GetService('Workspace')
+    local Players = game:GetService('Players')
+     
+    local LocalPlayer = Players.LocalPlayer
+    local Camera = Workspace.CurrentCamera
+    local Mouse = LocalPlayer:GetMouse()
+     
+    local Player = nil -- Our target player
+     
+     
+    local GetClosestPlayer = function() -- // Optimized GetClosestPlayer i believe?
+        local ClosestDistance, ClosestPlayer = 100000, nil
+        for _, Player : Player in pairs(Players:GetPlayers()) do
+            if Player.Name ~= LocalPlayer.Name and Player.Character and Player.Character:FindFirstChild('HumanoidRootPart') then
+                local Root, Visible = Camera:WorldToScreenPoint(Player.Character.HumanoidRootPart.Position)
+                if not Visible then
+                    continue
+                end
+                Root = (Vector2.new(Mouse.X, Mouse.Y) - Vector2.new(Root.X, Root.Y)).Magnitude
+                if Root < ClosestDistance then
+                    ClosestPlayer = Player
+                    ClosestDistance = Root
+                end
+            end
+        end
+        return ClosestPlayer
+    end
+     
+    Mouse.KeyDown:Connect(function(key) -- Get our closest player (toggle)
+        if key == Aimbot.Keybind:lower() then
+            Player = not Player and GetClosestPlayer() or nil
+        end
+    end)
+     
+    RunService.RenderStepped:Connect(function()
+        if not Player then
+            return
+        end
+        if not Aimbot.Status then
+            return
+        end
+        local Hitpart = Player.Character:FindFirstChild(Aimbot.Hitpart)
+        if not Hitpart then
+            return
+        end
+    Camera.CFrame = CFrame.new(Camera.CFrame.Position, Hitpart.Position + Hitpart.Velocity * Vector3.new(Aimbot.Prediction.X, Aimbot.Prediction.Y, Aimbot.Prediction.X))
+    end)
+    print("Silent Aim Activated")
+end)
+
+
+local ExampleButton = Groupbox1:CreateButton("Trigger Bot", function()
+    -- Instructions: To enable the triggerbot, press E, to change the keybind go down to instruction 2.
+
+-- // Variables \\ --
+
+_G.triggerbot = false
+
+local player = game:GetService("Players").LocalPlayer
+local mouse = player:GetMouse()
+
+local Clicked = false
+
+-- // Side Scripts \\ --
+
+game:GetService("UserInputService").InputBegan:connect(function(Input, GameProcessedEvent)
+	if GameProcessedEvent then
+		return
+	end
+
+	if Input.KeyCode == Enum.KeyCode.E then -- Instruction 2: To change the keybind, change the "Enum.KeyCode.E" to "Enum.KeyCode.(TheKey)" for changing your keybind.
+		_G.triggerbot = not _G.triggerbot
+	end
+end)
+
+-- // Main Scripts \\ --
+
+game:GetService("RunService").RenderStepped:Connect(function()
+	if (mouse.Target.Parent:FindFirstChildOfClass("Humanoid") or mouse.Target.Parent.Parent:FindFirstChildOfClass("Humanoid")) and _G.triggerbot and mouse.Target.Parent.Name ~= player.Name then
+		local humanoid = mouse.Target.Parent:FindFirstChildOfClass("Humanoid") or mouse.Target.Parent.Parent:FindFirstChildOfClass("Humanoid")
+		
+		if humanoid.Health >= 1 then
+			local name = mouse.Target.Parent.Name
+
+			mouse1press()
+			Clicked = false
+		end
+	elseif _G.triggerbot and not Clicked then
+		mouse1release()
+	elseif not _G.triggerbot and (mouse.Target.Parent:FindFirstChildOfClass("Humanoid") or mouse.Target.Parent.Parent:FindFirstChildOfClass("Humanoid")) then
+		Clicked = true
+	end
+end)
+    print("activated triggerbbot")
+end)
+
+
+
+local ExampleButton = Groupbox2:CreateButton("Sky Anti Lock", function()
+getgenv().Sky = true 
+getgenv().SkyAmount = 825
+
+game:GetService("RunService").heartbeat:Connect(function()
+    if getgenv().Sky ~= false then 
+    local vel = game.Players.LocalPlayer.Character.HumanoidRootPart.Velocity
+    game.Players.LocalPlayer.Character.HumanoidRootPart.Velocity = Vector3.new(0,      getgenv().SkyAmount,0) 
+    game:GetService("RunService").RenderStepped:Wait()
+    game.Players.LocalPlayer.Character.HumanoidRootPart.Velocity = vel
+    end 
+end)
+    print("Pressed")
+end)
+
+
+
+local ExampleButton = Groupbox3:CreateButton("X Fly", function()
+    local plr = game.Players.LocalPlayer
+local mouse = plr:GetMouse()
+
+localplayer = plr
+
+if workspace:FindFirstChild("Core") then
+workspace.Core:Destroy()
+end
+
+local Core = Instance.new("Part")
+Core.Name = "Core"
+Core.Size = Vector3.new(0.05, 0.05, 0.05)
+
+spawn(function()
+Core.Parent = workspace
+local Weld = Instance.new("Weld", Core)
+Weld.Part0 = Core
+Weld.Part1 = localplayer.Character.LowerTorso
+Weld.C0 = CFrame.new(0, 0, 0)
+end)
+
+workspace:WaitForChild("Core")
+
+local torso = workspace.Core
+flying = true
+local speed= 150
+local keys={a=false,d=false,w=false,s=false}
+local e1
+local e2
+local function start()
+local pos = Instance.new("BodyPosition",torso)
+local gyro = Instance.new("BodyGyro",torso)
+pos.Name="EPIXPOS"
+pos.maxForce = Vector3.new(math.huge, math.huge, math.huge)
+pos.position = torso.Position
+gyro.maxTorque = Vector3.new(9e9, 9e9, 9e9)
+gyro.cframe = torso.CFrame
+repeat
+wait()
+localplayer.Character.Humanoid.PlatformStand=true
+local new=gyro.cframe - gyro.cframe.p + pos.position
+if not keys.w and not keys.s and not keys.a and not keys.d then
+speed=5
+end
+if keys.w then
+new = new + workspace.CurrentCamera.CoordinateFrame.lookVector * speed
+speed=speed+0
+end
+if keys.s then
+new = new - workspace.CurrentCamera.CoordinateFrame.lookVector * speed
+speed=speed+0
+end
+if keys.d then
+new = new * CFrame.new(speed,0,0)
+speed=speed+0
+end
+if keys.a then
+new = new * CFrame.new(-speed,0,0)
+speed=speed+0
+end
+if speed>10 then
+speed=5
+end
+pos.position=new.p
+if keys.w then
+gyro.cframe = workspace.CurrentCamera.CoordinateFrame*CFrame.Angles(-math.rad(speed*0),0,0)
+elseif keys.s then
+gyro.cframe = workspace.CurrentCamera.CoordinateFrame*CFrame.Angles(math.rad(speed*0),0,0)
+else
+gyro.cframe = workspace.CurrentCamera.CoordinateFrame
+end
+until flying == false
+if gyro then gyro:Destroy() end
+if pos then pos:Destroy() end
+flying=false
+localplayer.Character.Humanoid.PlatformStand=false
+speed=100
+end
+e1=mouse.KeyDown:connect(function(key)
+if not torso or not torso.Parent then flying=false e1:disconnect() e2:disconnect() return end
+if key=="w" then
+keys.w=true
+elseif key=="s" then
+keys.s=true
+elseif key=="a" then
+keys.a=true
+elseif key=="d" then
+keys.d=true
+elseif key=="x" then
+if flying==true then
+flying=false
+else
+flying=true
+start()
+end
+end
+end)
+e2=mouse.KeyUp:connect(function(key)
+if key=="w" then
+keys.w=false
+elseif key=="s" then
+keys.s=false
+elseif key=="a" then
+keys.a=false
+elseif key=="d" then
+keys.d=false
+end
+end)
+    print("X fly")
+end)
+
+
+local ExampleSlider = Groupbox3:CreateSlider("Walk Speed", 16, 1000, 16, function(S)
+    game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = S
+    print(value)
+ end)
+
+
+
+ local ExampleSlider = Groupbox3:CreateSlider("Jump Heigh", 50, 500, 50, function(S)
+    game.Players.LocalPlayer.Character.Humanoid.JumpPower = S
+    print(value)
+ end)
+
+
+
+
+local ExampleButton = Groupbox4:CreateButton("FOV 50", function()
+    local FovNumber = 50 --Enter your FOV number here
+local Camera = workspace.CurrentCamera
+Camera.FieldOfView = FovNumber
+    print("")
+end)
+
+
+local ExampleButton = Groupbox4:CreateButton("FOV 70", function()
+    local FovNumber = 70 --Enter your FOV number here
+local Camera = workspace.CurrentCamera
+Camera.FieldOfView = FovNumber
+    print("")
+end)
+
+
+
+local ExampleButton = Groupbox4:CreateButton("FOV 85", function()
+    local FovNumber = 85 --Enter your FOV number here
+local Camera = workspace.CurrentCamera
+Camera.FieldOfView = FovNumber
+    print("")
+end)
+
+
+
+
+local ExampleButton = Groupbox4:CreateButton("FOV 95", function()
+    local FovNumber = 95 --Enter your FOV number here
+local Camera = workspace.CurrentCamera
+Camera.FieldOfView = FovNumber
+    print("")
+end)
+
+
+
+
+local ExampleButton = Groupbox4:CreateButton("FOV 100", function()
+    local FovNumber = 100 --Enter your FOV number here
+local Camera = workspace.CurrentCamera
+Camera.FieldOfView = FovNumber
+    print("")
+end)
+
+
+
+local ExampleButton = Groupbox4:CreateButton("FOV 120", function()
+    local FovNumber = 120 --Enter your FOV number here
+local Camera = workspace.CurrentCamera
+Camera.FieldOfView = FovNumber
+    print("")
+end)
+
+
+
+local Groupbox1 = Tab3:CreateGroupbox("Credits", "Left")
+
+local ExampleButton = Groupbox1:CreateButton("Script was mede by Jay ]", function()
+    print("Pressed")
+end)
+
+
+
+local Groupbox1 = Tab3:CreateGroupbox("Socials", "Left")
+
+local ExampleButton = Groupbox1:CreateButton("discord: jqdenfr", function()
+    print("Pressed")
+end)
+
+
+local ExampleButton = Groupbox1:CreateButton("youtube:erazedlol", function()
+    print("Pressed")
+end)
+
+
+
+
+
+
+ExampleToggle2:CreateKeyBind()
+
+
+
+-- Groupbox 2
+local ExampleToggle2 = Groupbox2:CreateToggle("Example toggle", function(state)
+   print(state)
+end)
+
+local ExampleToggle3 = Groupbox2:CreateToggle("Example keybind", function(state)
+   print(state)
+end)
+
+local ExampleButton2 = Groupbox2:CreateButton("Example Button", function()
+    print("Pressed")
+end)
+
+ExampleToggle3:CreateKeyBind()
+
+local ExampleSlider2 = Groupbox2:CreateSlider("Example slider", 0, 25, 0, function(value)
+   print(value)
+end)
+
+local ExampleDropdown2 = Groupbox2:CreateDropdown("Example Dropdown", {"Option 1", "Option 2", "Option 3"}, function(state)
+   print(state)
+end)
+
+local ExampleColorPicker2 = Groupbox2:CreateColorPicker("Color", Color3.fromRGB(0, 0, 0), function(state)
+   print(state.R, state.G, state.B)
+end)
+
+-- Groupbox 3
+local ExampleToggle4 = Groupbox3:CreateToggle("Example toggle", function(state)
+   print(state)
+end)
+
+local ExampleToggle5 = Groupbox3:CreateToggle("Example keybind", function(state)
+   print(state)
+end)
+
+local ExampleButton3 = Groupbox3:CreateButton("Example Button", function()
+    print("Pressed")
+end)
+
+ExampleToggle5:CreateKeyBind()
+
+local ExampleSlider3 = Groupbox3:CreateSlider("Example slider", 0, 25, 0, function(value)
+   print(value)
+end)
+
+local ExampleDropdown3 = Groupbox3:CreateDropdown("Example Dropdown", {"Option 1", "Option 2", "Option 3"}, function(state)
+   print(state)
+end)
+
+local ExampleColorPicker3 = Groupbox3:CreateColorPicker("Color", Color3.fromRGB(0, 0, 0), function(state)
+   print(state.R, state.G, state.B)
+end)
+
+-- Groupbox 4
+local ExampleToggle5 = Groupbox4:CreateToggle("Example toggle", function(state)
+   print(state)
+end)
+
+local ExampleToggle6 = Groupbox4:CreateToggle("Example keybind", function(state)
+   print(state)
+end)
+
+local ExampleButton4 = Groupbox4:CreateButton("Example Button", function()
+    print("Pressed")
+end)
+
+ExampleToggle6:CreateKeyBind()
+
+local ExampleSlider4 = Groupbox4:CreateSlider("Example slider", 0, 25, 0, function(value)
+   print(value)
+end)
+
+local ExampleDropdown4 = Groupbox4:CreateDropdown("Example Dropdown", {"Option 1", "Option 2", "Option 3"}, function(state)
+   print(state)
+end)
+
+local ExampleColorPicker4 = Groupbox4:CreateColorPicker("Color", Color3.fromRGB(0, 0, 0), function(state)
+   print(state.R, state.G, state.B)
+end)
